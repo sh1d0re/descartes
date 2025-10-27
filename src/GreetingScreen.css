@@ -4,9 +4,7 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    max-width: 70vw;
-    max-height: 70vh;
-    width: auto;
-    height: auto;
+    width: 30vw;
+    height: 30vw;
     display: block;
 }
