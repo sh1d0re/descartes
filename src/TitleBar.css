@@ -22,10 +22,10 @@
 
 .titleBarButtons {
     position: relative;
-    width: 0.8vw;
-    height: 0.8vw;
-    min-width: 15px;
-    min-height: 15px;
+    width: 0.5vw;
+    height: 0.5vw;
+    min-width: 13px;
+    min-height: 13px;
     max-width: 20px;
     max-height: 20px;
     margin: 5px;
@@ -44,14 +44,14 @@
 }
 
 .minimizeButton {
-    background: #ffed4b;
+    background: #00000020;
 }
 .minimizeButton:hover {
     background: #e0c643;
 }
 
 .maximizeButton {
-    background: #60ff4b;
+    background: #00000020;
 }
 .maximizeButton:hover {
     background: #5de043;
@@ -71,15 +71,21 @@
 }
 
 .settings {
+    display: inline-block;
     width: 1.8vw;
     height: 1.8vw;
-    min-width: 25px;
-    min-height: 25px;
+    min-width: 20px;
+    min-height: 20px;
     max-width: 50px;
     max-height: 50px;
-    width: 1.8vw;
-    height: 1.8vw;
+    border: none;
+    border-radius: 30%;
     position: absolute;
-    justify-self: center;
     right: 15px;
+    padding: 10px;
+    cursor: pointer;
+    -webkit-app-region: no-drag;
+}
+.settings:hover {
+    background: #00000020;
 }

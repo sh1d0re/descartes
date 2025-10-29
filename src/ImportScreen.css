@@ -1,0 +1,16 @@
+.selectionBox {
+    border: 0.5px #3b3b3b solid;
+    width: 30vw;
+    height: 50vh;
+    min-width: 200px;
+    min-height: 400px;
+    align-items: center;
+    justify-items: center;
+}
+
+p {
+    position: relative;
+    align-self: center;
+    justify-self: center;
+    text-align: center;
+}

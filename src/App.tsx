@@ -1,15 +1,19 @@
-import React from 'react';
+import React, { StrictMode } from 'react';
 import GreetingScreen from './GreetingScreen.tsx';
+import ImportScreen from './ImportScreen.tsx';
 import TitleBar from './TitleBar.tsx';
-import './App.css';
+import './Global.css';
 
 function App() {
-    return (
-        <div>
+    return <>
+        <StrictMode>
             <TitleBar />
-            <GreetingScreen />
-        </div>
-    );
+            <div className="screenSpacer">
+                <GreetingScreen />
+                <ImportScreen />
+            </div>
+        </StrictMode>
+    </>;
 }
 
 export default App;

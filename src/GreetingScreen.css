@@ -1,10 +1,53 @@
 .centerLogo {
-    filter: drop-shadow(0px 0px 100px rgba(0, 0, 0, 0.5));
+    filter: drop-shadow(0px 0px 100px rgb(0, 0, 0));
     position: fixed;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 30vw;
-    height: 30vw;
+    max-width: 80vw;
+    max-height: 80vh;
+    width: auto;
+    height: auto;
     display: block;
+    opacity: 1;
+    will-change: opacity, transform;
+    z-index: 100;
+}
+.centerLogo.fade-in {
+    animation: gs-fade-in 100ms cubic-bezier(.2,.8,.2,1) forwards;
+}
+.centerLogo.fade-out {
+    animation: gs-fade-out 1000ms cubic-bezier(.2,.8,.2,1) forwards;
+}
+
+.hidePanel {
+    position: absolute;
+    width: 100vw;
+    height: 100vh;
+    background: #dfdfea;
+    opacity: 1;
+    z-index: 99;
+}
+
+
+@keyframes gs-fade-in {
+    from {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.98);
+    }
+    to {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+    }
+}
+
+@keyframes gs-fade-out {
+    from {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+    }
+    to {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.98);
+    }
 }

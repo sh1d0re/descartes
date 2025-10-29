@@ -1,0 +1,28 @@
+@font-face {
+    font-family: 'MPlusRounded';
+    src: url('./public/MPLUSRounded1c-Thin.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+body {
+    background: #dfdfea;
+    color: #3b3b3b;
+    font-family: 'MPlusRounded', serif;
+    overflow: hidden;
+    -webkit-user-select: none;
+}
+
+.icon {
+    width: 40px;
+    height: 40px;
+}
+
+.screenSpacer {
+    display: flex;
+    flex-direction: column;
+    height: 90vh;
+    gap: 20px;
+    margin: 15px;
+}
