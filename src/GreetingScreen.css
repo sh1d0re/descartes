@@ -29,7 +29,6 @@
     z-index: 99;
 }
 
-
 @keyframes gs-fade-in {
     from {
         opacity: 0;

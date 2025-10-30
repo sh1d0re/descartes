@@ -1,6 +1,6 @@
 @font-face {
     font-family: 'MPlusRounded';
-    src: url('./public/MPLUSRounded1c-Thin.ttf') format('truetype');
+    src: url('MPLUSRounded1c-Thin.ttf') format('truetype');
     font-weight: normal;
     font-style: normal;
     font-display: swap;
@@ -12,6 +12,14 @@ body {
     font-family: 'MPlusRounded', serif;
     overflow: hidden;
     -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -o-user-select: none;
+    user-select: none;
+    -webkit-user-drag: none;
+    -khtml-user-drag: none;
+    -moz-user-drag: none;
+    -o-user-drag: none;
 }
 
 .icon {

@@ -36,7 +36,7 @@ function GreetingScreen({ onDone }: Props) {
         'centerLogo ';
 
     return <>
-        <img className={centerLogoClass} src="./logoWithTextJA.svg" alt="Logo"></img>
+        <img className={centerLogoClass} src="./logoWithTextJA.svg" alt="Logo" draggable="false"></img>
         <div className="hidePanel"></div>
     </>;
 }

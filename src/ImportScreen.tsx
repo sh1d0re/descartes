@@ -1,14 +1,9 @@
 import "./ImportScreen.css";
+import ImportBox  from "./ImportBox";
 
 function ImportScreen() {
     return <>
-        <div className="importScreen">
-            <h1>Import Screen</h1>
-            <div className="selectionBox">
-                <p>Import File</p>
-                <p>(.pdf, .txt, .docx, etc.)</p>
-            </div>
-        </div>
+        <ImportBox />
     </>;
 }
 

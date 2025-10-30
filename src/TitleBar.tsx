@@ -14,9 +14,6 @@ function TitleBar() {
     const handleOpenSettings = () => {
         (window as any).__descartes?.openSettings?.();
     }
-    const closeSettings = () => {
-        (window as any).__descartes?.closeWindow?.("settings");
-    };
 
     return <>
         <div className="titleBar">
