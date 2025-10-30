@@ -42,8 +42,13 @@ export default function ImportBox(): ReactElement {
     const handleFiles = useCallback(async (files: FileList | null) => {
         if (!files || files.length === 0) return;
         const f = files[0] as any;
-        const srcPath: string | undefined = f.path;
-        if (!srcPath) { showTempMessage('Cannot access file path here.', true); return; }
+        const srcPath: string = f.path;
+        if (!srcPath) {
+            const file = f as File;
+            const ab = await file.arrayBuffer();
+            const res = await (window as any).__descartes?.importFileFromBuffer?.(file.name, ab);
+            // handle res
+        }
 
         if (!ValidDocumentType(srcPath)) { showTempMessage('This filetype is not accepted', true); return; }
 
@@ -56,18 +61,38 @@ export default function ImportBox(): ReactElement {
     const onDragOver = useCallback((e: React.DragEvent) => { e.preventDefault(); e.dataTransfer.dropEffect = 'copy'; setHover(true); }, []);
     const onDragLeave = useCallback((e: React.DragEvent) => { e.preventDefault(); setHover(false); }, []);
 
-    const onClick = useCallback(() => inputRef.current?.click(), []);
+    const onClick = useCallback(async () => {
+        const chosen = await (window as any).__descartes?.openFileDialog?.();
+        if (chosen) await handleFilePath(chosen);
+    }, []);
+
+    async function handleFilePath(srcPath: string) {
+        if (!ValidDocumentType(srcPath)) {
+            showTempMessage('This filetype is not accepted', true); return; 
+        }
+        const res = await (window as any).__descartes?.importFile?.(srcPath);
+        if (res?.ok) {
+            showTempMessage('Imported successfully', false); await refreshIndex(); 
+        }
+        else {
+            showTempMessage('Import failed: ' + (res?.error || 'unknown'), true); 
+        }
+    }
+
     const onInput = useCallback((e: React.ChangeEvent<HTMLInputElement>) => { handleFiles(e.target.files); e.currentTarget.value = ''; }, [handleFiles]);
 
     const handleDelete = useCallback(async (key: string) => {
         const res = await (window as any).__descartes?.deleteEntry?.(key);
-        if (res?.ok) { showTempMessage('Deleted', false); setIndex(res.index || {}); }
-        else showTempMessage('Delete failed', true);
+        if (res?.ok) {
+            showTempMessage('Deleted', false); setIndex(res.index || {});
+        }
+        else {
+            showTempMessage('Delete failed', true);
+        }
     }, [showTempMessage]);
 
     return <>
         <section>
-            <h2>Import</h2>
             <div className="importScreen">
                 <div
                     className={`selectionBox importDrop ${hover ? 'hover' : ''}`}
@@ -82,22 +107,21 @@ export default function ImportBox(): ReactElement {
                     <img className="importLogo" src="import.svg" draggable={false} />
                     <p>Click or drop a file here to import</p>
                 </div>
-
+                
                 {message && (
-                    <div style={{ border: messageDanger ? '1px solid red' : '1px solid #666', padding: 8, marginTop: 8 }}>
-                        {message}
+                    <div className="messageBox" style={{ border: messageDanger ? '1px solid red' : '1px solid #676767'}}>
+                        <p>{message}</p>
                     </div>
                 )}
-
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(200px,1fr))', gap: 12, marginTop: 12 }}>
+                <div className="documentParent">
                     {Object.entries(index).map(([k, v]) => (
-                        <div key={k} className="selectionBox">
-                            <img className="documentLogo" src="document.svg" draggable={false} />
+                        <div key={k} className="documentBox">
+                            <img className="clickableLogo documentLogo" src="document.svg" draggable={false} />
                             <p>{k}</p>
                             <p>{v.description || 'No description'}</p>
                             <p>Added at: {ReadableDate(v.addedAt)}</p>
                             <p>Last interacted at: {ReadableDate(v.lastInteractedAt)}</p>
-                            <img className="deleteLogo" src="trashbin.svg" onClick={() => handleDelete(k)} />
+                            <img className="clickableLogo deleteLogo" src="delete.svg" onClick={() => handleDelete(k)} draggable={false} />
                         </div>
                     ))}
                 </div>

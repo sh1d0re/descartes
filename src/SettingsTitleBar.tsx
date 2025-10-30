@@ -1,7 +1,7 @@
 import "./Global.css"
 import "./TitleBar.css";
 
-function SettingsTitleBar() {
+function TitleBar() {
     const closeSettings = () => {
         (window as any).__descartes?.closeWindow?.("settings");
     };
@@ -13,7 +13,8 @@ function SettingsTitleBar() {
             </div>
             <img className="titleLogo" src="logo.svg" ></img>
         </div>
+        
     </>;
 }
 
-export default SettingsTitleBar;
+export default TitleBar;

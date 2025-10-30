@@ -4,7 +4,7 @@ import './Global.css';
 
 function Settings() {
     const handleClose = () => {
-        (window as any).__descartes?.setAPIKey?.('settings');
+        (window as any).__descartes?.closeWindow?.('settings');
     };
 
     return <>

@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain } = require('electron');
+const { app, BrowserWindow, ipcMain, dialog } = require('electron');
 const path = require('path');
 const fs = require('fs').promises;
 const { spawn } = require('child_process');
@@ -13,7 +13,7 @@ function createWindow() {
         name: "main",
         width: 1200,
         height: 800,
-        minWidth: 400,
+        minWidth: 800,
         minHeight: 300,
         show: false,
         frame: false,
@@ -85,13 +85,12 @@ ipcMain.on('open-settings', () => {
     createSettingsWindow();
 });
 
-// import-file: copy a file into the app imports folder, update index.json and spawn Python
 ipcMain.handle('import-file', async (event, srcPath) => {
     try {
         if (typeof srcPath !== 'string' || srcPath.length === 0) throw new Error('invalid source path');
         const destDir = path.join(app.getPath('userData'), 'imports');
         await fs.mkdir(destDir, { recursive: true });
-
+        console.log('Importing file from', srcPath, 'to', destDir);
         const base = path.basename(srcPath);
         const timestamp = Date.now();
         const destName = `${timestamp}-${base}`;
@@ -99,7 +98,6 @@ ipcMain.handle('import-file', async (event, srcPath) => {
 
         await fs.copyFile(srcPath, destPath);
 
-        // read or create index.json
         const indexPath = path.join(destDir, 'index.json');
         let index = {};
         try {
@@ -109,7 +107,6 @@ ipcMain.handle('import-file', async (event, srcPath) => {
             index = {};
         }
 
-        // build a new key
         const keys = Object.keys(index).filter(k => /^Imported Script \(\d+\)$/.test(k));
         const next = keys.length + 1;
         const entryKey = `Imported Script (${next})`;
@@ -126,14 +123,11 @@ ipcMain.handle('import-file', async (event, srcPath) => {
 
         await fs.writeFile(indexPath, JSON.stringify(index, null, 2), 'utf8');
 
-        // spawn python child process with the saved file path as argv[1]
         try {
             const pyPath = path.join(__dirname, '..', 'src', 'main.py');
             const py = spawn(process.platform === 'win32' ? 'python' : 'python3', [pyPath, destPath], { detached: true });
             py.unref();
-        } catch (e) {
-            // ignore spawn errors but continue
-        }
+        } catch (e) {console.log(e);}
 
         return { ok: true, entryKey, index };
     } catch (err) {
@@ -147,6 +141,7 @@ ipcMain.handle('get-index', async () => {
         const raw = await fs.readFile(indexPath, 'utf8');
         return { ok: true, index: JSON.parse(raw || '{}') };
     } catch (e) {
+        console.log(e);
         return { ok: true, index: {} };
     }
 });
@@ -196,7 +191,24 @@ ipcMain.on('app-close', () => {
     app.quit();
 });
 
-app.whenReady().then(createWindow);
+app.whenReady().then(() => {
+  try {
+    createWindow();
+  } catch (err) {
+    console.error('main: createWindow failed', err);
+  }
+
+  ensureImportsDirAndIndex().catch(err => {
+    console.error('main: ensureImportsDirAndIndex failed', err);
+
+    try {
+      const idxPath = getIndexPath();
+      fs.writeFile(idxPath, JSON.stringify({}, null, 2), 'utf8').catch(e => console.error('write fallback failed', e));
+    } catch (e) {
+      console.error('fallback write error', e);
+    }
+  });
+});
 
 app.on('window-all-closed', () => {
     if (process.platform !== 'darwin') app.quit();
@@ -222,4 +234,15 @@ function closeWindow(windowName) {
 
 ipcMain.on('close-window', (event, windowName) => {
     if (typeof windowName === 'string') closeWindow(windowName);
+});
+
+ipcMain.handle('show-open-dialog', async () => {
+    try {
+        const res = await dialog.showOpenDialog({ properties: ['openFile'] });
+        if (res.canceled || !res.filePaths || res.filePaths.length === 0) return null;
+        return res.filePaths[0];
+    } catch (err) {
+        console.error('main: show-open-dialog error', err);
+        return null;
+    }
 });
