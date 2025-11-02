@@ -45,13 +45,15 @@ body {
 
 .clickableLogo {
     filter: #a2a2a2;
+    display: block;
+    object-fit: contain;
+    cursor: pointer;
+}
+.clickableLogo.size {
     width: 4vw;
     height: 4vh;
     min-width: 40px;
     min-height: 40px;
     max-width: 80px;
     max-height: 80px;
-    display: block;
-    object-fit: contain;
-    cursor: pointer;
 }

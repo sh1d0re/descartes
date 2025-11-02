@@ -47,7 +47,7 @@ export default function ImportBox(): ReactElement {
             const file = f as File;
             const ab = await file.arrayBuffer();
             const res = await (window as any).__descartes?.importFileFromBuffer?.(file.name, ab);
-            // handle res
+            // handle res or smth idk
         }
 
         if (!ValidDocumentType(srcPath)) { showTempMessage('This filetype is not accepted', true); return; }
@@ -108,6 +108,8 @@ export default function ImportBox(): ReactElement {
                     <p>Click or drop a file here to import</p>
                 </div>
                 
+                <div className="horizontalDivider" />
+
                 {message && (
                     <div className="messageBox" style={{ border: messageDanger ? '1px solid red' : '1px solid #676767'}}>
                         <p>{message}</p>
@@ -116,9 +118,13 @@ export default function ImportBox(): ReactElement {
                 <div className="documentParent">
                     {Object.entries(index).map(([k, v]) => (
                         <div key={k} className="documentBox">
-                            <img className="clickableLogo documentLogo" src="document.svg" draggable={false} />
-                            <p>{k}</p>
-                            <p>{v.description || 'No description'}</p>
+                            <div className="documentBoxHeader">
+                                <img className="clickableLogo documentLogo" src="document.svg" draggable={false} />
+                                <p>
+                                    {k}
+                                    <p>{v.description || 'No description'}</p>
+                                </p>
+                            </div>
                             <p>Added at: {ReadableDate(v.addedAt)}</p>
                             <p>Last interacted at: {ReadableDate(v.lastInteractedAt)}</p>
                             <img className="clickableLogo deleteLogo" src="delete.svg" onClick={() => handleDelete(k)} draggable={false} />
