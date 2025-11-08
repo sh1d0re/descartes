@@ -13,6 +13,7 @@ contextBridge.exposeInMainWorld('__descartes', {
     getIndex: () => ipcRenderer.invoke('get-index'),
     openFileDialog: () => ipcRenderer.invoke('show-open-dialog'),
     deleteEntry: (entryKey) => ipcRenderer.invoke('delete-entry', entryKey),
+    runDescartes: (entryKey) => ipcRenderer.invoke('run-descartes', entryKey),
 
     setAPIKey: (key) => ipcRenderer.send('set-api-key', key),
 });

@@ -91,6 +91,16 @@ export default function ImportBox(): ReactElement {
         }
     }, [showTempMessage]);
 
+    const handleOpen = useCallback(async (key: string) => {
+        const res = await (window as any).__descartes?.runDescartes?.(key);
+        if (res?.ok) {
+            showTempMessage('Opened Successfully', false);
+        }
+        else {
+            showTempMessage('Failed', true);
+        }
+    }, [showTempMessage]);
+
     return <>
         <section>
             <div className="importScreen">
@@ -117,12 +127,12 @@ export default function ImportBox(): ReactElement {
                 )}
                 <div className="documentParent">
                     {Object.entries(index).map(([k, v]) => (
-                        <div key={k} className="documentBox">
+                        <div key={k} className="documentBox" onClick={() => handleOpen(k)}>
                             <div className="documentBoxHeader">
                                 <img className="clickableLogo documentLogo" src="document.svg" draggable={false} />
-                                <p>
+                                <p className="documentBoxTitle">
                                     {k}
-                                    <p>{v.description || 'No description'}</p>
+                                    <p className="documentBoxDescription">{v.description || 'No description'}</p>
                                 </p>
                             </div>
                             <p>Added at: {ReadableDate(v.addedAt)}</p>

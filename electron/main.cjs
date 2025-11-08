@@ -22,7 +22,7 @@ function createWindow() {
             preload: path.join(__dirname, 'preload.cjs'),
             nodeIntegration: false,
             contextIsolation: true,
-            //devTools: false
+            devTools: false
         },
     });
     win.winName = 'main';
@@ -123,12 +123,6 @@ ipcMain.handle('import-file', async (event, srcPath) => {
 
         await fs.writeFile(indexPath, JSON.stringify(index, null, 2), 'utf8');
 
-        try {
-            const pyPath = path.join(__dirname, '..', 'src', 'main.py');
-            const py = spawn(process.platform === 'win32' ? 'python' : 'python3', [pyPath, destPath], { detached: true });
-            py.unref();
-        } catch (e) {console.log(e);}
-
         return { ok: true, entryKey, index };
     } catch (err) {
         return { ok: false, error: err?.message ?? String(err) };
@@ -161,6 +155,19 @@ ipcMain.handle('delete-entry', async (event, entryKey) => {
     } catch (e) {
         return { ok: false, error: e?.message ?? String(e) };
     }
+});
+
+ipcMain.handle('run-descartes', async (event, entryKey) => {
+    try {
+        const pythonBinary = process.env.PYTHON_BIN || '/usr/bin/python3'; 
+        const descartesMainPythonFile = path.join(__dirname, '..', 'src', 'main.py');
+        const child = spawn(pythonBinary, [descartesMainPythonFile, entryKey], {
+            detached: true,
+            stdio: ['ignore', 'ignore', 'inherit'],
+            shell: false,
+        });
+        child.unref();
+    } catch (e) {console.log(e);}
 });
 
 ipcMain.on('app-minimize', (event) => {
