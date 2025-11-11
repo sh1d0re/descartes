@@ -1,5 +1,5 @@
-import "./Global.css"
-import "./TitleBar.css";
+import "@/Global.css"
+import "@/TitleBar.css";
 
 function TitleBar() {
     const closeSettings = () => {

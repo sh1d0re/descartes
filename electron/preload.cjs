@@ -1,19 +1,21 @@
-const { contextBridge, ipcRenderer } = require('electron');
+const { contextBridge, ipcRenderer } = require("electron");
 
-contextBridge.exposeInMainWorld('__descartes', {
-    closeApp: () => ipcRenderer.send('app-close'),
-    openSettings: () => ipcRenderer.send('open-settings'),
-    minimizeApp: () => ipcRenderer.send('app-minimize'),
-    toggleMaximizeApp: () => ipcRenderer.send('app-toggle-maximize'),
-    maximizeApp: () => ipcRenderer.send('app-maximize'),
-    unmaximizeApp: () => ipcRenderer.send('app-unmaximize'),
-    closeWindow: (windowName) => ipcRenderer.send('close-window', windowName),
+contextBridge.exposeInMainWorld("__descartes", {
+    closeApp: () => ipcRenderer.send("app-close"),
+    openSettings: () => ipcRenderer.send("open-settings"),
+    minimizeApp: () => ipcRenderer.send("app-minimize"),
+    toggleMaximizeApp: () => ipcRenderer.send("app-toggle-maximize"),
+    closeWindow: (windowName) => ipcRenderer.send("close-window", windowName),
     
-    importFile: (filePath) => ipcRenderer.invoke('import-file', filePath),
-    getIndex: () => ipcRenderer.invoke('get-index'),
-    openFileDialog: () => ipcRenderer.invoke('show-open-dialog'),
-    deleteEntry: (entryKey) => ipcRenderer.invoke('delete-entry', entryKey),
-    runDescartes: (entryKey) => ipcRenderer.invoke('run-descartes', entryKey),
+    importFile: (filePath) => ipcRenderer.invoke("import-file", filePath),
+    getIndex: () => ipcRenderer.invoke("get-index"),
+    openFileDialog: () => ipcRenderer.invoke("show-open-dialog"),
+    deleteEntry: (entryKey) => ipcRenderer.invoke("delete-entry", entryKey),
+    runDescartes: (entryKey, apiToken) => ipcRenderer.invoke("run-descartes", entryKey, apiToken),
+});
 
-    setAPIKey: (key) => ipcRenderer.send('set-api-key', key),
+contextBridge.exposeInMainWorld("__apitoken", {
+    setAPIToken: (token) => ipcRenderer.invoke("set-api-token", token),
+    getAPIToken: () => ipcRenderer.invoke("get-api-token"),
+    deleteAPIToken: () => ipcRenderer.invoke("delete-api-token")
 });

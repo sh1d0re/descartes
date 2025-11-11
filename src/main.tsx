@@ -1,7 +1,7 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import App from './App';
-import Settings from './SettingsScreen';
+import Settings from './settings/SettingsScreen';
 try {
     const rootEl = document.getElementById('root')!;
     const root = createRoot(rootEl);

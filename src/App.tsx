@@ -1,9 +1,9 @@
 import React, { StrictMode } from 'react';
-import GreetingScreen from './GreetingScreen.tsx';
-import ImportScreen from './ImportScreen.tsx';
-import TitleBar from './TitleBar.tsx';
-import './Global.css';
-import Footer from './Footer.tsx';
+import GreetingScreen from './main/GreetingScreen.tsx';
+import ImportScreen from './main/importer/ImportScreen.tsx';
+import TitleBar from './main/TitleBar.tsx';
+import '@/Global.css';
+import Footer from './main/Footer.tsx';
 
 function App() {
     return <>

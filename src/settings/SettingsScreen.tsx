@@ -1,6 +1,6 @@
 import React, { StrictMode } from 'react';
 import SettingsTitleBar from './SettingsTitleBar.tsx';
-import './Global.css';
+import '@/Global.css';
 
 function Settings() {
     const handleClose = () => {

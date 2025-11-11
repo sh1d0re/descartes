@@ -1,10 +1,17 @@
 import os
 import sys
+from openai import OpenAI
+from anthropic import Anthropic
+import google.generativeai as genai
+
 from pypdf import PdfReader
 
 if sys.argv > 1: 
     fileName = sys.argv[1]
 else:
+    exit(0)
+
+if not(os.path.exists(fileName)):
     exit(0)
 
 def extractTextFromPDF(file_path):
@@ -23,4 +30,7 @@ elif any([fileName.lower().endswith(ext) for ext in ['.txt', '.md', '.csv']]):
     extracted_text = extractTextFromTXT(fileName)
 else:
     extracted_text = "Unsupported file format."
+
+
+
 print(extracted_text)

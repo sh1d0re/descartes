@@ -1,4 +1,4 @@
-import "./Global.css";
+import "@/Global.css";
 
 function Footer() {
     return <>
