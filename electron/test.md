@@ -1,0 +1,1 @@
+If a dog is an animal, and a cat is an animal, are dogs a cats? Explain to me with logical expressions

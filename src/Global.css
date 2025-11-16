@@ -9,8 +9,8 @@
 body {
     background: #dfdfea;
     color: #3b3b3b;
-    font-family: 'MPlusRounded', serif;
     overflow: hidden;
+    font-family: 'MPlusRounded', serif;
     -webkit-user-select: none;
     -khtml-user-select: none;
     -moz-user-select: none;
@@ -50,8 +50,8 @@ body {
     cursor: pointer;
 }
 .clickableLogo.size {
-    width: 4vw;
-    height: 4vh;
+    width: 2vw;
+    height: 2vh;
     min-width: 40px;
     min-height: 40px;
     max-width: 80px;

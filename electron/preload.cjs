@@ -11,10 +11,14 @@ contextBridge.exposeInMainWorld("__descartes", {
     getIndex: () => ipcRenderer.invoke("get-index"),
     openFileDialog: () => ipcRenderer.invoke("show-open-dialog"),
     deleteEntry: (entryKey) => ipcRenderer.invoke("delete-entry", entryKey),
+
     runDescartes: (entryKey, apiToken) => ipcRenderer.invoke("run-descartes", entryKey, apiToken),
+
+    changeSetting: (settingIndex, content) => ipcRenderer.invoke("change-setting", settingIndex, content),
+    getSetting: (settingIndex) => ipcRenderer.invoke("get-setting", settingIndex)
 });
 
-contextBridge.exposeInMainWorld("__apitoken", {
+contextBridge.exposeInMainWorld("__apiToken", {
     setAPIToken: (token) => ipcRenderer.invoke("set-api-token", token),
     getAPIToken: () => ipcRenderer.invoke("get-api-token"),
     deleteAPIToken: () => ipcRenderer.invoke("delete-api-token")

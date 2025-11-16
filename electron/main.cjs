@@ -2,7 +2,6 @@ const { app, BrowserWindow, ipcMain, dialog } = require("electron");
 const keytar = require("keytar");
 const path = require("path");
 const fs = require("fs").promises;
-const { spawn } = require("child_process");
 const { runDescartes, startSession, runDescartesWithPart, closeSession } = require("./descartes.cjs")
 
 const isDev = process.env.NODE_ENV === "development" || process.argv.includes("--dev");
@@ -12,6 +11,10 @@ const ACCOUNT_NAME = "apiToken"
 
 let mainWin = null;
 let settingsWin = null;
+
+const destDir = path.join(app.getPath("userData"), "imports");
+const indexPath = path.join(destDir, "index.json");
+const settingsPath = path.join(app.getPath("userData"), "settings.json");
 
 function createWindow() {
     const win = new BrowserWindow({
@@ -36,7 +39,7 @@ function createWindow() {
 
     if (isDev) {
         win.loadURL("http://localhost:5173");
-        //win.webContents.openDevTools();
+        win.webContents.openDevTools();
     } else {
         win.loadFile(path.join(__dirname, "..", "dist", "index.html"));
     }
@@ -93,7 +96,6 @@ ipcMain.on("open-settings", () => {
 ipcMain.handle("import-file", async (event, srcPath) => {
     try {
         if (typeof srcPath !== "string" || srcPath.length === 0) throw new Error("invalid source path");
-        const destDir = path.join(app.getPath("userData"), "imports");
         await fs.mkdir(destDir, { recursive: true });
         console.log("Importing file from", srcPath, "to", destDir);
         const base = path.basename(srcPath);
@@ -103,7 +105,6 @@ ipcMain.handle("import-file", async (event, srcPath) => {
 
         await fs.copyFile(srcPath, destPath);
 
-        const indexPath = path.join(destDir, "index.json");
         let index = {};
         try {
             const raw = await fs.readFile(indexPath, "utf8");
@@ -136,7 +137,6 @@ ipcMain.handle("import-file", async (event, srcPath) => {
 
 ipcMain.handle("get-index", async () => {
     try {
-        const indexPath = path.join(app.getPath("userData"), "imports", "index.json");
         const raw = await fs.readFile(indexPath, "utf8");
         return { ok: true, index: JSON.parse(raw || "{}") };
     } catch (e) {
@@ -147,8 +147,6 @@ ipcMain.handle("get-index", async () => {
 
 ipcMain.handle("delete-entry", async (event, entryKey) => {
     try {
-        const destDir = path.join(app.getPath("userData"), "imports");
-        const indexPath = path.join(destDir, "index.json");
         const raw = await fs.readFile(indexPath, "utf8");
         const index = JSON.parse(raw || "{}");
         if (!index[entryKey]) return { ok: false, error: "not found" };
@@ -163,16 +161,12 @@ ipcMain.handle("delete-entry", async (event, entryKey) => {
 });
 
 ipcMain.handle("run-descartes", async (event, entryKey, apiToken) => {
-    const destDir = path.join(app.getPath("userData"), "imports");
-
-    const indexPath = path.join(destDir, "index.json");
     const indexRaw = await fs.readFile(indexPath, "utf8");
     const index = JSON.parse(indexRaw || "{}");
     
-    const settingsPath = path.join(destDir, "settings.json");
     const settingsRaw = await fs.readFile(settingsPath, "utf8");
     const settings = JSON.parse(settingsRaw || "{}");
-    
+
     try {
         const result = await runDescartes(index[entryKey]["fileDirectory"], settings["selectedProvider"], apiToken);
         return result
@@ -198,6 +192,34 @@ ipcMain.on("app-close", () => {
     console.log(BrowserWindow.getAllWindows()[1]);
     BrowserWindow.getAllWindows().forEach(w => w.close());
     app.quit();
+});
+
+ipcMain.handle("get-setting", async (event, settingIndex) => {
+    try {
+        const raw = await fs.readFile(settingsPath, "utf8");
+        return { ok: true, settings: JSON.parse(raw || "{}")[settingIndex] };
+    } catch (e) {
+        console.log(e);
+        return { ok: true, index: {} };
+    }
+});
+
+ipcMain.handle("change-setting", async (event, settingIndex, content) => {
+    try {
+        let settings = {};
+        try {
+            const settingsRaw = await fs.readFile(settingsPath, "utf8");
+            const settings = JSON.parse(settingsRaw || "{}");
+        } catch (e) {
+            settings = {};
+        }
+        settings[settingIndex] = content;
+        await fs.writeFile(settingsPath, JSON.stringify(settings, null, 2), "utf8");
+        return { ok: true };
+    } catch (e) {
+        console.log(e);
+        return { ok: true, index: {} };
+    }
 });
 
 app.whenReady().then(() => {

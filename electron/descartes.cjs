@@ -49,6 +49,7 @@ async function appendOutput(fileName, text) {
 }
 
 async function runDescartes(fileName, providerName, apiToken) {
+    console.log("Running descartes on", providerName)
     const valid = await validateFile(fileName)
     if (!valid) throw new Error("File does not exist")
     validateProvider(providerName)
@@ -63,6 +64,7 @@ async function runDescartes(fileName, providerName, apiToken) {
     } catch {}
 
     const prompt = `${prior}\n\nFile content:\n${fileContent}\n\nRespond based on above.`
+    console.log(prompt)
 
     let responseText = ""
     if (providerName === "openai") {
@@ -79,9 +81,10 @@ async function runDescartes(fileName, providerName, apiToken) {
         })
         responseText = res.content[0].text
     } else if (providerName === "gemini") {
-        const model = client.getGenerativeModel({ model: "gemini-1.5-flash" })
+        const model = client.getGenerativeModel({ model: "gemini-2.0-flash-lite" })
         const res = await model.generateContent(prompt)
         responseText = res.response.text()
+        console.log(responseText)
     }
 
     await appendOutput(fileName, responseText)
@@ -89,7 +92,7 @@ async function runDescartes(fileName, providerName, apiToken) {
 
 async function startSession(fileName, providerName, apiToken) {
     const valid = await validateFile(fileName)
-    
+
     if (!valid) throw new Error("File does not exist")
 
     validateProvider(providerName)
@@ -124,11 +127,11 @@ async function runDescartesWithPart(prompt) {
         })
         responseText = res.content[0].text
     } else if (providerName === "gemini") {
-        const model = client.getGenerativeModel({ model: "gemini-1.5-flash" })
+        const model = client.getGenerativeModel({ model: "gemini-2.0-flash-lite" })
         const res = await model.generateContent(fullPrompt)
         responseText = res.response.text()
     }
-
+    console.log(responseText)
     await appendOutput(fileName, responseText)
 }
 

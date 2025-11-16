@@ -29,7 +29,7 @@ export default function ImportBox(): ReactElement {
     const showTempMessage = useCallback((txt: string, danger = false) => {
         setMessage(txt);
         setMessageDanger(danger);
-        window.setTimeout(() => setMessage(null), 5000);
+        window.setTimeout(() => setMessage(null), 6000);
     }, []);
 
     const refreshIndex = useCallback(async () => {
@@ -91,8 +91,9 @@ export default function ImportBox(): ReactElement {
         }
     }, [showTempMessage]);
 
-    const handleOpen = useCallback(async (key: string) => {
-        const res = await (window as any).__descartes?.runDescartes?.(key);
+    const handleOpen = useCallback(async (entryKey: string) => {
+        const apiToken = await (window as any).__apiToken?.getAPIToken?.();
+        const res = await (window as any).__descartes?.runDescartes?.(entryKey, apiToken);
         if (res?.ok) {
             showTempMessage('Opened Successfully', false);
         }
