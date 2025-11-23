@@ -6,7 +6,6 @@ import '@/Global.css';
 function Settings() {
     const handleSetAPIToken = () => {
         const newToken = document.getElementById("apiTokenField")?.value;
-        console.log(newToken);
         if (newToken) {
             (window as any).__apiToken?.setAPIToken?.(newToken);
         }
@@ -19,25 +18,25 @@ function Settings() {
     };
 
     const [selectedProvider, setSelected] = useState("");
+    const [apiToken, setApiToken] = useState<string>();
+
     useEffect(() => {
         (async () => {
-            const result = await (window as any).__descartes?.getSetting?.("selectedProvider");
-            if (result) setSelected(result);
+            const provider = await (window as any).__descartes?.getSetting?.("selectedProvider");
+            if (provider) setSelected(provider);
+
+            const token = await (window as any).__apiToken?.getAPIToken?.();
+            if (token) setApiToken(token);
+            //console.log("loaded token:", token);
         })();
     }, []);
-
-    let apiToken: any;
-    (async () => {
-        apiToken = await (window as any).__apiToken?.getAPIToken?.();
-    })();
-    console.log(apiToken);
 
     return <>
         <StrictMode>
             <SettingsTitleBar />
             <div className="screenSpacer">
                 <h1>Settings</h1>
-                <p>This is the standalone settings screen (not rendered by App.tsx).</p>
+                <p>AI API Token Settings Field</p>
                 <div className="apiFieldParent">
                     <input className="inputField" id="apiTokenField" type="text" placeholder={apiToken} />
                     <button className="inputFieldUpdateButton" onClick={handleSetAPIToken}>Update</button>

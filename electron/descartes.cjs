@@ -76,7 +76,7 @@ async function runDescartes(fileName, providerName, apiToken) {
     } else if (providerName === "claude") {
         const res = await client.messages.create({
             model: "claude-3-5-sonnet-20240620",
-            max_tokens: 2048,
+            max_tokens: 4096,
             messages: [{ role: "user", content: prompt }]
         })
         responseText = res.content[0].text

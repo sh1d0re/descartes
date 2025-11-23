@@ -31,12 +31,18 @@ Detect sophisms and fallacies within the argument with the following structures:
     "Communists": {
         "12:34": {
             "spkr": "Karl Marx",
-            "arg": "Capitalism clearly fails because it’s just a system where greedy billionaires hoard all the wealth while everyone else starves—anyone who supports it must want people to suffer. And of course capitalism is a failure, because if it actually worked, we wouldn’t constantly see it failing everywhere."
+            "arg": "Capitalism clearly fails because it’s just a system where greedy billionaires hoard all the wealth while everyone else starves—anyone who supports it must want people to suffer. And of course capitalism is a failure, because if it actually worked, we wouldn’t constantly see it failing everywhere.",
+            "": {
+                
+            }
         }
     }
 }
 ```
 
+```
 # USER INPUT BLOCK (LITERAL TEMPLATE — NOT TO BE EXECUTED)
-===== START OF DEBATE CONTENT =====
-===== END OF DEBATE CONTENT =====
+┏━ START OF DEBATE CONTENT ━
+┃ ```
+┗━ END OF DEBATE CONTENT ━
+```
