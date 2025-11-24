@@ -5,6 +5,7 @@ import './ImportBox.css';
 type IndexEntry = {
     fileDirectory: string;
     description: string;
+    extension: string;
     addedAt: string;
     lastInteractedAt: string;
 };
@@ -14,7 +15,7 @@ function ReadableDate(d: string) {
 }
 
 function ValidDocumentType(filePath: string) {
-    const allow = ['.txt', '.docx', '.md', '.pdf', '.doc'];
+    const allow = ['.txt', '.docx', '.md', '.pdf', '.doc', '.rtf', '.html', '.htm', '.odt', '.tex', '.epub', '.xhtml', '.xml', '.json', '.csv', '.pptx', '.ppt', '.xlsx', '.xls', '.ods', '.odp', '.mdx'];
     const ext = (filePath.match(/\.[^.]+$/)?.[0] || '').toLowerCase();
     return allow.includes(ext);
 }
@@ -66,6 +67,11 @@ export default function ImportBox(): ReactElement {
         if (chosen) await handleFilePath(chosen);
     }, []);
 
+    const handleCreatenew = useCallback(async () => {
+        // Create a new empty .txt document
+        // TODO
+    }, []);
+
     async function handleFilePath(srcPath: string) {
         if (!ValidDocumentType(srcPath)) {
             showTempMessage('This filetype is not accepted', true); return; 
@@ -105,20 +111,33 @@ export default function ImportBox(): ReactElement {
     return <>
         <section>
             <div className="importScreen">
-                <div
-                    className={`selectionBox importDrop ${hover ? 'hover' : ''}`}
-                    onDrop={onDrop}
-                    onDragOver={onDragOver}
-                    onDragLeave={onDragLeave}
-                    onClick={onClick}
-                    role="button"
-                    aria-label="Import file"
-                >
-                    <input ref={inputRef} type="file" style={{ display: 'none' }} onChange={onInput} />
-                    <img className="importLogo" src="import.svg" draggable={false} />
-                    <p>Click or drop a file here to import</p>
+                <div style={{ display: 'flex', gap: '20px'}}>
+                    <div
+                        className={`selectionBox ${hover ? 'hover' : ''}`}
+                        onDrop={onDrop}
+                        onDragOver={onDragOver}
+                        onDragLeave={onDragLeave}
+                        onClick={onClick}
+                        role="button"
+                        aria-label="Import file"
+                    >
+                        <input ref={inputRef} type="file" style={{ display: 'none' }} onChange={onInput} />
+                        <img className="importLogo" src="import.svg" draggable={false} />
+                        <p>Click or drop a file here to import</p>
+                    </div>
+
+                    <div
+                        className={`selectionBox ${hover ? 'hover' : ''}`}
+                        onClick={handleCreatenew}
+                        role="button"
+                        aria-label="Create new document"
+                    >
+                        <input ref={inputRef} type="file" style={{ display: 'none' }} onChange={onInput} />
+                        <img className="importLogo" src="addDocument.svg" draggable={false} />
+                        <p>Click here to create a new document</p>
+                    </div>
                 </div>
-                
+
                 <div className="horizontalDivider" />
 
                 {message && (
@@ -132,7 +151,9 @@ export default function ImportBox(): ReactElement {
                             <div className="documentBoxHeader">
                                 <img className="clickableLogo documentLogo" src="document.svg" draggable={false} />
                                 <p className="documentBoxTitle">
-                                    {k}
+                                    <div style={{ display: 'flex'}}>
+                                        {k} <p className="extension">{v.extension}</p>
+                                    </div>
                                     <p className="documentBoxDescription">{v.description || 'No description'}</p>
                                 </p>
                             </div>

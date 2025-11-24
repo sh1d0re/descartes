@@ -2,7 +2,8 @@ const { app, BrowserWindow, ipcMain, dialog } = require("electron");
 const keytar = require("keytar");
 const path = require("path");
 const fs = require("fs").promises;
-const { runDescartes, startSession, runDescartesWithPart, closeSession } = require("./descartes.cjs")
+const { runDescartes, startSession, runDescartesWithPart, closeSession } = require("./descartes.cjs");
+const { deepStrictEqual } = require("assert");
 
 const isDev = process.env.NODE_ENV === "development" || process.argv.includes("--dev");
 
@@ -97,11 +98,13 @@ ipcMain.handle("import-file", async (event, srcPath) => {
     try {
         if (typeof srcPath !== "string" || srcPath.length === 0) throw new Error("invalid source path");
         await fs.mkdir(destDir, { recursive: true });
-        console.log("Importing file from", srcPath, "to", destDir);
         const base = path.basename(srcPath);
         const timestamp = Date.now();
         const destName = `${timestamp}-${base}`;
         const destPath = path.join(destDir, destName);
+        const destExtention = path.extname(base).toUpperCase().replace(".", "");
+        const destRawName = base.replace(/\.[^.]+$/, '');
+        console.log(destRawName);
 
         await fs.copyFile(srcPath, destPath);
 
@@ -113,9 +116,7 @@ ipcMain.handle("import-file", async (event, srcPath) => {
             index = {};
         }
 
-        const keys = Object.keys(index).filter(k => /^Imported Script \(\d+\)$/.test(k));
-        const next = keys.length + 1;
-        const entryKey = `Imported Script (${next})`;
+        const entryKey = `${destRawName}`;
 
         const now = new Date();
         const addedAt = `${now.getFullYear()}/${now.getMonth()+1}/${now.getDate()}`;
@@ -123,6 +124,7 @@ ipcMain.handle("import-file", async (event, srcPath) => {
         index[entryKey] = {
             fileDirectory: destPath,
             description: "",
+            extension: destExtention,
             addedAt,
             lastInteractedAt: addedAt,
         };
