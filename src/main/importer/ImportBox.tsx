@@ -20,26 +20,26 @@ function ValidDocumentType(filePath: string) {
     return allow.includes(ext);
 }
 
-export default function ImportBox(): ReactElement {
+function ImportBox(): ReactElement {
     const inputRef = useRef<HTMLInputElement | null>(null);
     const [hover, setHover] = useState<boolean>(false);
     const [message, setMessage] = useState<string | null>(null);
     const [messageDanger, setMessageDanger] = useState<boolean>(false);
     const [index, setIndex] = useState<Record<string, IndexEntry>>({});
-
+    
     const showTempMessage = useCallback((txt: string, danger = false) => {
         setMessage(txt);
         setMessageDanger(danger);
         window.setTimeout(() => setMessage(null), 6000);
     }, []);
-
+    
     const refreshIndex = useCallback(async () => {
         const res = await (window as any).__descartes?.getIndex?.();
         if (res?.ok) setIndex(res.index || {});
     }, []);
-
+    
     useEffect(() => { refreshIndex(); }, [refreshIndex]);
-
+    
     const handleFiles = useCallback(async (files: FileList | null) => {
         if (!files || files.length === 0) return;
         const f = files[0] as any;
@@ -50,28 +50,28 @@ export default function ImportBox(): ReactElement {
             const res = await (window as any).__descartes?.importFileFromBuffer?.(file.name, ab);
             // handle res or smth idk
         }
-
+        
         if (!ValidDocumentType(srcPath)) { showTempMessage('This filetype is not accepted', true); return; }
-
+        
         const res = await (window as any).__descartes?.importFile?.(srcPath);
         if (res?.ok) { showTempMessage('Imported successfully', false); await refreshIndex(); }
         else { showTempMessage('Import failed: ' + (res?.error || 'unknown'), true); }
     }, [refreshIndex, showTempMessage]);
-
+    
     const onDrop = useCallback((e: React.DragEvent) => { e.preventDefault(); setHover(false); handleFiles(e.dataTransfer?.files ?? null); }, [handleFiles]);
     const onDragOver = useCallback((e: React.DragEvent) => { e.preventDefault(); e.dataTransfer.dropEffect = 'copy'; setHover(true); }, []);
     const onDragLeave = useCallback((e: React.DragEvent) => { e.preventDefault(); setHover(false); }, []);
-
+    
     const onClick = useCallback(async () => {
         const chosen = await (window as any).__descartes?.openFileDialog?.();
         if (chosen) await handleFilePath(chosen);
     }, []);
-
+    
     const handleCreatenew = useCallback(async () => {
         // Create a new empty .txt document
         // TODO
     }, []);
-
+    
     async function handleFilePath(srcPath: string) {
         if (!ValidDocumentType(srcPath)) {
             showTempMessage('This filetype is not accepted', true); return; 
@@ -84,9 +84,9 @@ export default function ImportBox(): ReactElement {
             showTempMessage('Import failed: ' + (res?.error || 'unknown'), true); 
         }
     }
-
+    
     const onInput = useCallback((e: React.ChangeEvent<HTMLInputElement>) => { handleFiles(e.target.files); e.currentTarget.value = ''; }, [handleFiles]);
-
+    
     const handleDelete = useCallback(async (key: string) => {
         const res = await (window as any).__descartes?.deleteEntry?.(key);
         if (res?.ok) {
@@ -96,7 +96,7 @@ export default function ImportBox(): ReactElement {
             showTempMessage('Delete failed', true);
         }
     }, [showTempMessage]);
-
+    
     const handleOpen = useCallback(async (entryKey: string) => {
         const apiToken = await (window as any).__apiToken?.getAPIToken?.();
         const res = await (window as any).__descartes?.runDescartes?.(entryKey, apiToken);
@@ -120,7 +120,7 @@ export default function ImportBox(): ReactElement {
                         onClick={onClick}
                         role="button"
                         aria-label="Import file"
-                    >
+                        >
                         <input ref={inputRef} type="file" style={{ display: 'none' }} onChange={onInput} />
                         <img className="importLogo" src="import.svg" draggable={false} />
                         <p>Click or drop a file here to import</p>
@@ -167,3 +167,5 @@ export default function ImportBox(): ReactElement {
         </section>
     </>;
 }
+
+export default ImportBox;

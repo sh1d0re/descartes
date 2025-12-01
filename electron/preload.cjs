@@ -7,14 +7,16 @@ contextBridge.exposeInMainWorld("__descartes", {
     toggleMaximizeApp: () => ipcRenderer.send("app-toggle-maximize"),
     closeWindow: (windowName) => ipcRenderer.send("close-window", windowName),
     
-    importFile: (filePath) => ipcRenderer.invoke("import-file", filePath),
+    importFile: (filePath) => ipcRenderer.send("import-file", filePath),
     getIndex: () => ipcRenderer.invoke("get-index"),
     openFileDialog: () => ipcRenderer.invoke("show-open-dialog"),
-    deleteEntry: (entryKey) => ipcRenderer.invoke("delete-entry", entryKey),
+    deleteEntry: (entryKey) => ipcRenderer.send("delete-entry", entryKey),
 
     runDescartes: (entryKey, apiToken) => ipcRenderer.invoke("run-descartes", entryKey, apiToken),
 
-    changeSetting: (settingIndex, content) => ipcRenderer.invoke("change-setting", settingIndex, content),
+    getDescartesContent: (entryKey) => ipcRenderer.invoke("get-descartes-file", entryKey),
+
+    changeSetting: (settingIndex, content) => ipcRenderer.send("change-setting", settingIndex, content),
     getSetting: (settingIndex) => ipcRenderer.invoke("get-setting", settingIndex)
 });
 

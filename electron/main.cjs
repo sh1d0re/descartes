@@ -6,6 +6,7 @@ const { runDescartes, startSession, runDescartesWithPart, closeSession } = requi
 const { deepStrictEqual } = require("assert");
 
 const isDev = process.env.NODE_ENV === "development" || process.argv.includes("--dev");
+let screenAt = "home";
 
 const SERVICE_NAME = "Descartes"
 const ACCOUNT_NAME = "apiToken"
@@ -31,7 +32,7 @@ function createWindow() {
             preload: path.join(__dirname, "preload.cjs"),
             nodeIntegration: false,
             contextIsolation: true,
-            devTools: false
+            // devTools: false
         },
     });
     win.winName = "main";
@@ -147,6 +148,10 @@ ipcMain.handle("get-index", async () => {
     }
 });
 
+ipcMain.on("change-screen", (event, screenName) => {
+    screenAt = screenName;
+})
+
 ipcMain.handle("delete-entry", async (event, entryKey) => {
     try {
         const raw = await fs.readFile(indexPath, "utf8");
@@ -159,6 +164,15 @@ ipcMain.handle("delete-entry", async (event, entryKey) => {
         return { ok: true, index };
     } catch (e) {
         return { ok: false, error: e?.message ?? String(e) };
+    }
+});
+
+ipcMain.handle("get-descartes-file", async (event, entryKey) => {
+    try {
+        const contentRaw = await fs.readFile(destDir, "utf8");
+    } catch (e) {
+        console.log(e);
+        return { ok: false, error: "failed to read index" };
     }
 });
 
