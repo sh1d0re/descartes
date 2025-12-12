@@ -1,7 +1,7 @@
 {
     "name": "descartes",
     "private": true,
-    "version": "0.0.0",
+    "version": "1.0.0-stable",
     "type": "module",
     "main": "electron/main.cjs",
     "scripts": {
@@ -42,8 +42,9 @@
         "wait-on": "^9.0.1"
     },
     "build": {
-        "appId": "com.recurrence.descartes",
+        "appId": "jp.co.recurrence.descartes",
         "productName": "Descartes",
+        "copyright": "Copyright © 2025 Recurrence Inc.",
         "files": [
             "dist/**/*",
             "electron/**/*",
@@ -52,8 +53,7 @@
         "mac": {
             "icon": "build/icons/mac/icon.icns",
             "target": [
-                "dmg",
-                "zip"
+                "dmg"
             ]
         },
         "win": {
